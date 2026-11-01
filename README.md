@@ -5,11 +5,11 @@ Technical record for the Consumer Clarity Talabat patch project. This repository
 ## Current deliverables
 
 - Patch source: https://github.com/AltF4G0x/consumer-clarity
-- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.3.1
-- Patch bundle: `patches-1.3.1.mpp`
+- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.4.0
+- Patch bundle: `patches-1.4.0.mpp`
 - Target application: talabat (`com.talabat`) 14.4.0, version code 2368
 - Supported architecture: ARM64 only for native sorting
-- Release MPP SHA-256: `0f83038849fb804f17f527fd510c6be86368674aff2ab31e14426facde073010`
+- Release MPP SHA-256: `f4e575cb6c0473611938bdc06e63c58b9618a21fbbdd224d2fc649b03e88ebb1`
 
 The source publishes only Morphe patch bundles and metadata. No pre-patched APK is distributed.
 
@@ -146,22 +146,29 @@ Device testing of the expanded bundle found three implementation defects that st
 
 The corrected all-five-patch APK completed two cold starts, reached Talabat's country-selection screen instead of the license activity, remained running, opened the Consumer Clarity settings activity, persisted the external-link toggle, and activated both native sorting hooks.
 
-## Expanded 76-patch catalog
+## Expanded 92-patch catalog
 
-The current bundle contains 76 independently selectable patches: 48 live preference switches, 27 build-time controls, and one sorting section. The settings activity reads a catalog generated from the patches selected in Morphe, so unselected patches do not appear as available switches.
+The current bundle contains 92 independently selectable patches. The settings activity reads a catalog generated from the patches selected in Morphe, so unselected patches do not appear as available switches.
 
 Categories include:
 
 - Discovery and sponsored-placement ordering.
 - Firebase, Adjust, Perseus, Braze, Google, and Huawei measurement controls.
-- Sentry crash, trace, profiling, replay, screenshot, context, lifecycle, interaction, and native reporting controls.
+- Sentry crash, trace, profiling, replay, screenshot, context, lifecycle, interaction, native reporting, cache, database, queue, full-display, and tombstone controls.
 - Shake Bugs initialization, reporting, network, identity, notification, and feedback controls.
-- WebView media, cookies, geolocation, file/content access, incognito mode, images, audio, safe browsing, darkening, forms, and popup windows.
+- WebView media, cookies, geolocation, file/content access, mixed content, storage, cache, incognito mode, images, audio, safe browsing, darkening, forms, and popup windows.
+- Display screenshot and keep-screen-on controls.
 - Advertising identifiers, background location, geofences, sensors, Bluetooth, NFC, overlays, screenshots, camera, microphone, and legacy storage.
 
 Three Shake Bugs methods lacked a scratch register for a safe live guard. Their controls are explicitly marked build-time rather than risking parameter corruption. Resource permission and component controls are also marked build-time.
 
 The categorized native control center includes Calm feed and Maximum privacy presets, live switches, build-time labels, reset tools, sorting controls, original app links, and developer notes.
+
+## Morphe MCP audit and optimization
+
+The `brosssh/morphe-mcp` server was installed locally with all repository submodules and queried through its MCP tools. Official patcher DSL guidance, smali patterns, shared-extension conventions, and community autoplay/navigation examples were used to review the implementation. Local compatibility fixes pin the MCP 1.x SDK and select a free loopback port.
+
+Java/SDK preference access now reuses one `SharedPreferences` instance and caches the application context. Early null contexts fall back safely instead of crashing. Native Dart sorting refreshes preferences once per second instead of reopening and parsing the XML file for every comparison. Its allocation-failure path was also hardened.
 
 ## IDA Pro analysis
 
@@ -171,11 +178,10 @@ IDA Pro 9.5 analyzed the ARM64 Dart snapshot and produced a 272 MB `.i64` databa
 
 Confirmed:
 
-- All 76 patches compile and apply together with Morphe validation; the result report has no failed patches.
-- The fully enabled APK contains 76 settings catalog entries and opens the categorized settings activity.
-- Live switches, presets, sorting controls, and selected permission removals were exercised on the emulator.
-- Both native sorting hooks activate without a new crash report.
-- The release MPP and metadata are published, and the downloaded v1.3.1 asset matches the local build SHA-256 exactly.
+- All 92 patches compile and apply together with Morphe validation; the result report has no failed patches.
+- The optimized APK contains 92 settings catalog entries and opens the categorized settings activity with the new Display controls.
+- Earlier checks exercised live switches, presets, sorting controls, selected permission removals, and both native sorting hooks without a new crash report.
+- The release MPP and metadata are published, and the downloaded v1.4.0 asset matches the local build SHA-256 exactly.
 - Repository files contain no workstation usernames, host paths, private keys, or test credentials.
 
 Not fully verified:
@@ -187,7 +193,7 @@ Not fully verified:
 - Display-ad inventory and sponsored-deals popups outside Braze are not claimed as blocked.
 - Later-page global ordering is not claimed; each response is sorted as it arrives.
 
-The metadata generator was also corrected to select the newest MPP in the build directory. The v1.3.1 machine-readable catalog and README both advertise the same 76 patches as the release bundle.
+The metadata generator was also corrected to select the newest MPP in the build directory. The machine-readable catalog and README advertise the same 92 patches as the release bundle.
 
 ## Community directory
 
