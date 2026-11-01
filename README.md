@@ -5,11 +5,11 @@ Technical record for the Consumer Clarity Talabat patch project. This repository
 ## Current deliverables
 
 - Patch source: https://github.com/AltF4G0x/consumer-clarity
-- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.1.0
-- Patch bundle: `patches-1.1.0.mpp`
+- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.1.1
+- Patch bundle: `patches-1.1.1.mpp`
 - Target application: talabat (`com.talabat`) 14.4.0, version code 2368
 - Supported architecture: ARM64 only for native sorting
-- Release MPP SHA-256: `147c669744b7fb40af33c90ec6f542e6d7a5c8c4e9f6d372aa4e1082f0d8dad4`
+- Release MPP SHA-256: `9e2dc3d60a84af1c5310a2b23f3c0c37748faca2e8b48d9258d0ab70e8e3ff9a`
 
 The source publishes only Morphe patch bundles and metadata. No pre-patched APK is distributed.
 
@@ -136,6 +136,16 @@ The extension manifest alone did not register the activity in Morphe's output, s
 
 Video autoplay was deliberately not changed: the available `VideoPlayerInstanceApi.play` path cannot distinguish autoplay from manual playback, and suppressing it would break user-initiated playback.
 
+## Startup regression and correction
+
+Device testing of the expanded bundle found three implementation defects that static validation did not catch:
+
+- The license preference read ran during `Application.attachBaseContext`, before `ActivityThread.currentApplication()` was available. `checkLicense` now reads preferences through the valid `Context` parameter supplied by Talabat.
+- The external-link patch invoked static `Uri.parse` as a virtual method, causing an Android verifier error. The corrected bytecode uses `invoke-static`.
+- Early-return branches for the license, analytics, and Braze settings were inverted. Enabled settings now skip the intended SDK path; disabled settings continue to the original implementation.
+
+The corrected all-five-patch APK completed two cold starts, reached Talabat's country-selection screen instead of the license activity, remained running, opened the Consumer Clarity settings activity, persisted the external-link toggle, and activated both native sorting hooks.
+
 ## Verification status and limitations
 
 Confirmed:
@@ -147,7 +157,7 @@ Confirmed:
 
 Not fully verified:
 
-- Complete restaurant/review UI flows after all patches, because the emulator went offline before those checks.
+- Complete restaurant/review sorting behavior and pagination in the Flutter UI.
 - Server-provided aggregate rating truth or stability. A client patch cannot make changing server values independently truthful.
 - Google-independent behavior of Maps, login, push, payments, or other Google-dependent features.
 - Display-ad inventory and sponsored-deals popups outside Braze are not claimed as blocked.
