@@ -5,11 +5,11 @@ Technical record for the Consumer Clarity Talabat patch project. This repository
 ## Current deliverables
 
 - Patch source: https://github.com/AltF4G0x/consumer-clarity
-- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.1.1
-- Patch bundle: `patches-1.1.1.mpp`
+- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.3.1
+- Patch bundle: `patches-1.3.1.mpp`
 - Target application: talabat (`com.talabat`) 14.4.0, version code 2368
 - Supported architecture: ARM64 only for native sorting
-- Release MPP SHA-256: `9e2dc3d60a84af1c5310a2b23f3c0c37748faca2e8b48d9258d0ab70e8e3ff9a`
+- Release MPP SHA-256: `0f83038849fb804f17f527fd510c6be86368674aff2ab31e14426facde073010`
 
 The source publishes only Morphe patch bundles and metadata. No pre-patched APK is distributed.
 
@@ -146,22 +146,52 @@ Device testing of the expanded bundle found three implementation defects that st
 
 The corrected all-five-patch APK completed two cold starts, reached Talabat's country-selection screen instead of the license activity, remained running, opened the Consumer Clarity settings activity, persisted the external-link toggle, and activated both native sorting hooks.
 
+## Expanded 76-patch catalog
+
+The current bundle contains 76 independently selectable patches: 48 live preference switches, 27 build-time controls, and one sorting section. The settings activity reads a catalog generated from the patches selected in Morphe, so unselected patches do not appear as available switches.
+
+Categories include:
+
+- Discovery and sponsored-placement ordering.
+- Firebase, Adjust, Perseus, Braze, Google, and Huawei measurement controls.
+- Sentry crash, trace, profiling, replay, screenshot, context, lifecycle, interaction, and native reporting controls.
+- Shake Bugs initialization, reporting, network, identity, notification, and feedback controls.
+- WebView media, cookies, geolocation, file/content access, incognito mode, images, audio, safe browsing, darkening, forms, and popup windows.
+- Advertising identifiers, background location, geofences, sensors, Bluetooth, NFC, overlays, screenshots, camera, microphone, and legacy storage.
+
+Three Shake Bugs methods lacked a scratch register for a safe live guard. Their controls are explicitly marked build-time rather than risking parameter corruption. Resource permission and component controls are also marked build-time.
+
+The categorized native control center includes Calm feed and Maximum privacy presets, live switches, build-time labels, reset tools, sorting controls, original app links, and developer notes.
+
+## IDA Pro analysis
+
+IDA Pro 9.5 analyzed the ARM64 Dart snapshot and produced a 272 MB `.i64` database. REA process capture then ran IDA's headless `idat` against that saved database. IDA independently confirmed the snapshot anchor and the exact instructions at review hook `0x00ffced0` and restaurant hook `0x017ae4e4`. JADX, Jadart, manifest inspection, and Android runtime checks supplied separate evidence rather than relying only on Ghidra.
+
 ## Verification status and limitations
 
 Confirmed:
 
-- All five patches compile and apply with Morphe validation.
-- Native sorting hooks activate in an ARM64 emulator session.
-- The release MPP and both metadata files download correctly through Morphe's own resolver.
+- All 76 patches compile and apply together with Morphe validation; the result report has no failed patches.
+- The fully enabled APK contains 76 settings catalog entries and opens the categorized settings activity.
+- Live switches, presets, sorting controls, and selected permission removals were exercised on the emulator.
+- Both native sorting hooks activate without a new crash report.
+- The release MPP and metadata are published, and the downloaded v1.3.1 asset matches the local build SHA-256 exactly.
 - Repository files contain no workstation usernames, host paths, private keys, or test credentials.
 
 Not fully verified:
 
 - Complete restaurant/review sorting behavior and pagination in the Flutter UI.
+- Every patch's server-visible effect on every screen and account state.
 - Server-provided aggregate rating truth or stability. A client patch cannot make changing server values independently truthful.
 - Google-independent behavior of Maps, login, push, payments, or other Google-dependent features.
 - Display-ad inventory and sponsored-deals popups outside Braze are not claimed as blocked.
 - Later-page global ordering is not claimed; each response is sorted as it arrives.
+
+The metadata generator was also corrected to select the newest MPP in the build directory. The v1.3.1 machine-readable catalog and README both advertise the same 76 patches as the release bundle.
+
+## Community directory
+
+The Morphe community patch directory aggregates registered sources rather than discovering repositories solely from version tags. Consumer Clarity already publishes the expected release tags, MPP assets, `patches-bundle.json`, and `patches-list.json`. Inclusion requires a Bundle Request through the `nvbangg/awesome-morphe` issue templates.
 
 ## Development history and privacy
 
