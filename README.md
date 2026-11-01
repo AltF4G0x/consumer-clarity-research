@@ -5,11 +5,11 @@ Technical record for the Consumer Clarity Talabat patch project. This repository
 ## Current deliverables
 
 - Patch source: https://github.com/AltF4G0x/consumer-clarity
-- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.0.0
-- Patch bundle: `patches-1.0.0.mpp`
+- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.1.0
+- Patch bundle: `patches-1.1.0.mpp`
 - Target application: talabat (`com.talabat`) 14.4.0, version code 2368
 - Supported architecture: ARM64 only for native sorting
-- Release MPP SHA-256: `aa018916391313e83979f29825cd6f02cabdf0adba3c9b9b75a0ba0f5fab3a4e`
+- Release MPP SHA-256: `147c669744b7fb40af33c90ec6f542e6d7a5c8c4e9f6d372aa4e1082f0d8dad4`
 
 The source publishes only Morphe patch bundles and metadata. No pre-patched APK is distributed.
 
@@ -100,11 +100,11 @@ The native loader correctly executes `System.loadLibrary("consumerclarity")` aft
 The public patch repository uses semantic-release and the standard Morphe template conventions:
 
 - `patches-bundle.json` resolves the latest stable MPP and metadata.
-- `patches-list.json` describes all four patches and exact compatibility.
+- `patches-list.json` describes all five patches and exact compatibility.
 - MPP manifest includes name, description, version, source, author, license, and `Patcher-Version: 2.1.0`.
 - GitHub Releases contain only MPP files, never APKs.
 
-Morphe Desktop independently resolved the repository and downloaded all 712,858 bytes of the release MPP. It then loaded every patch successfully. This verified the remote-source path independently of device-specific source caching.
+Morphe Desktop independently resolved the repository and downloaded all 712,858 bytes of the v1.0.0 release MPP. It then loaded every patch successfully. This verified the remote-source path independently of device-specific source caching. For v1.1.0, the public release asset and `patches-bundle.json` were downloaded successfully, and the release asset's SHA-256 exactly matches the locally built bundle.
 
 ## Build environment
 
