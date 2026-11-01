@@ -5,11 +5,11 @@ Technical record for the Consumer Clarity Talabat patch project. This repository
 ## Current deliverables
 
 - Patch source: https://github.com/AltF4G0x/consumer-clarity
-- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.6.0
-- Patch bundle: `patches-1.6.0.mpp`
+- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.6.1
+- Patch bundle: `patches-1.6.1.mpp`
 - Target application: talabat (`com.talabat`) 14.4.0, version code 2368
 - Supported architecture: ARM64 only for native sorting
-- Release MPP SHA-256: `9ca1e1c7b1bd92a3b411084e373839c834625ab1e17f8f9e522359427caac5d1`
+- Release MPP SHA-256: `4ee2840a54b8a86a9b2118d0b266b894ef9f27cc470b2b5deccdad10990c91b6`
 
 The source publishes only Morphe patch bundles and metadata. No pre-patched APK is distributed.
 
@@ -56,8 +56,8 @@ Review model fields confirmed in the AOT:
 Restaurant behavior:
 
 - Hook VA: `0x017ae4e4`
-- Entries with a positive `sponsored_rank` are placed after organic entries.
-- Remaining entries sort by descending rating and ascending ID.
+- Rated organic entries come first, followed by rated sponsored entries, unrated organic entries, and unrated sponsored entries.
+- Within each group, entries sort by descending rating and ascending ID. Unrated entries no longer win by ID when ratings are missing.
 - Organic CPC attribution metadata is not treated as proof of sponsorship.
 
 Restaurant model fields confirmed in the AOT:
@@ -182,7 +182,8 @@ Confirmed:
 - All 101 patches compile and apply together with Morphe validation; the result report has no failed patches.
 - The feature APK opens Talabat and the control center, displays the draggable home shortcut, and passes settings search and restaurant-filter checks.
 - Earlier checks exercised live switches, presets, sorting controls, selected permission removals, and both native sorting hooks without a new crash report.
-- The release MPP and metadata are published, and the downloaded v1.6.0 asset matches the local build SHA-256 exactly.
+- The release MPP and metadata are published, and the downloaded v1.6.1 asset matches the local build SHA-256 exactly.
+- The unrated restaurant correction builds and starts successfully. The emulator's map did not load, so its restaurant list could not be used for visual ordering verification.
 - Repository files contain no workstation usernames, host paths, private keys, or test credentials.
 
 Not fully verified:
