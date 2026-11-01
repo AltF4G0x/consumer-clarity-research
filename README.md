@@ -118,11 +118,29 @@ The source build uses:
 
 Official Morphe patcher and plugin artifacts can be published to Maven Local when GitHub Packages authentication is unavailable. Local release-signing is optional; it does not affect Morphe's own signing of patch sources or output APKs.
 
+## Expanded feature set
+
+A fifth patch now routes `openUrlInApp` to Android's default browser while preserving the original path when its setting is disabled. The URL-launcher analysis also confirmed that `launchUrl` already used an external browser, so only the in-app path was changed.
+
+A native Consumer Clarity settings activity is registered through Talabat's manifest and linked from the About page. It provides:
+
+- Sponsored modes: demote, hide, or original order.
+- Review modes: newest, oldest, highest rated, or original order.
+- Runtime toggles for analytics reduction, Braze popups, the Play license gate, and external links.
+- Links to the original Facebook and FAQ pages, patch source, and this research record.
+- Developer information explaining that no separate Talabat developer menu was found and that server experiments are not safe universal switches.
+
+The activity uses Android shared preferences. Native sorting reads the same preference file directly, while Java/SDK patches check it before returning early. Disabling a setting therefore restores the original code path rather than just changing a label.
+
+The extension manifest alone did not register the activity in Morphe's output, so the resource patch now declares it explicitly. The final manifest and About JSON were inspected to confirm the deep link and label are present.
+
+Video autoplay was deliberately not changed: the available `VideoPlayerInstanceApi.play` path cannot distinguish autoplay from manual playback, and suppressing it would break user-initiated playback.
+
 ## Verification status and limitations
 
 Confirmed:
 
-- All four patches compile and apply with Morphe validation.
+- All five patches compile and apply with Morphe validation.
 - Native sorting hooks activate in an ARM64 emulator session.
 - The release MPP and both metadata files download correctly through Morphe's own resolver.
 - Repository files contain no workstation usernames, host paths, private keys, or test credentials.
