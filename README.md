@@ -5,11 +5,11 @@ Technical record for the Consumer Clarity Talabat patch project. This repository
 ## Current deliverables
 
 - Patch source: https://github.com/AltF4G0x/consumer-clarity
-- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.4.0
-- Patch bundle: `patches-1.4.0.mpp`
+- Current release: https://github.com/AltF4G0x/consumer-clarity/releases/tag/v1.6.0
+- Patch bundle: `patches-1.6.0.mpp`
 - Target application: talabat (`com.talabat`) 14.4.0, version code 2368
 - Supported architecture: ARM64 only for native sorting
-- Release MPP SHA-256: `f4e575cb6c0473611938bdc06e63c58b9618a21fbbdd224d2fc649b03e88ebb1`
+- Release MPP SHA-256: `9ca1e1c7b1bd92a3b411084e373839c834625ab1e17f8f9e522359427caac5d1`
 
 The source publishes only Morphe patch bundles and metadata. No pre-patched APK is distributed.
 
@@ -146,18 +146,19 @@ Device testing of the expanded bundle found three implementation defects that st
 
 The corrected all-five-patch APK completed two cold starts, reached Talabat's country-selection screen instead of the license activity, remained running, opened the Consumer Clarity settings activity, persisted the external-link toggle, and activated both native sorting hooks.
 
-## Expanded 92-patch catalog
+## Expanded 101-patch catalog
 
-The current bundle contains 92 independently selectable patches. The settings activity reads a catalog generated from the patches selected in Morphe, so unselected patches do not appear as available switches.
+The current bundle contains 101 independently selectable patches. The settings activity reads a catalog generated from the patches selected in Morphe, so unselected patches do not appear as available switches.
 
 Categories include:
 
-- Discovery and sponsored-placement ordering.
+- Discovery, sponsored placement, and restaurant/review rating and content filters.
 - Firebase, Adjust, Perseus, Braze, Google, and Huawei measurement controls.
 - Sentry crash, trace, profiling, replay, screenshot, context, lifecycle, interaction, native reporting, cache, database, queue, full-display, and tombstone controls.
 - Shake Bugs initialization, reporting, network, identity, notification, and feedback controls.
 - WebView media, cookies, geolocation, file/content access, mixed content, storage, cache, incognito mode, images, audio, safe browsing, darkening, forms, and popup windows.
-- Display screenshot and keep-screen-on controls.
+- Display screenshot, keep-screen-on, preferred-language, and text-scaling controls.
+- A draggable home settings button, settings search, JSON backup/restore, link preview, browser, sharing, and copy actions.
 - Advertising identifiers, background location, geofences, sensors, Bluetooth, NFC, overlays, screenshots, camera, microphone, and legacy storage.
 
 Three Shake Bugs methods lacked a scratch register for a safe live guard. Their controls are explicitly marked build-time rather than risking parameter corruption. Resource permission and component controls are also marked build-time.
@@ -178,22 +179,22 @@ IDA Pro 9.5 analyzed the ARM64 Dart snapshot and produced a 272 MB `.i64` databa
 
 Confirmed:
 
-- All 92 patches compile and apply together with Morphe validation; the result report has no failed patches.
-- The optimized APK contains 92 settings catalog entries and opens the categorized settings activity with the new Display controls.
+- All 101 patches compile and apply together with Morphe validation; the result report has no failed patches.
+- The feature APK opens Talabat and the control center, displays the draggable home shortcut, and passes settings search and restaurant-filter checks.
 - Earlier checks exercised live switches, presets, sorting controls, selected permission removals, and both native sorting hooks without a new crash report.
-- The release MPP and metadata are published, and the downloaded v1.4.0 asset matches the local build SHA-256 exactly.
+- The release MPP and metadata are published, and the downloaded v1.6.0 asset matches the local build SHA-256 exactly.
 - Repository files contain no workstation usernames, host paths, private keys, or test credentials.
 
 Not fully verified:
 
 - Complete restaurant/review sorting behavior and pagination in the Flutter UI.
-- Every patch's server-visible effect on every screen and account state.
+- Link actions, backup/restore, accessibility options, and every patch's server-visible effect on every screen and account state.
 - Server-provided aggregate rating truth or stability. A client patch cannot make changing server values independently truthful.
 - Google-independent behavior of Maps, login, push, payments, or other Google-dependent features.
 - Display-ad inventory and sponsored-deals popups outside Braze are not claimed as blocked.
 - Later-page global ordering is not claimed; each response is sorted as it arrives.
 
-The metadata generator was also corrected to select the newest MPP in the build directory. The machine-readable catalog and README advertise the same 92 patches as the release bundle.
+The metadata generator was also corrected to select the newest MPP in the build directory. The machine-readable catalog and README advertise the same 101 patches as the release bundle.
 
 ## Community directory
 
